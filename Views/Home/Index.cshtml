@@ -1,0 +1,105 @@
+﻿@model IEnumerable<TeknoMarket.Models.Product>
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TeknoMarket - .NET Core MVC</title>
+    <link rel="stylesheet" href="~/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/style.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="#">TeknoMarket</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 mb-4">
+          <div class="p-3 bg-light border rounded">
+            <h5 class="mb-3">Filtrele</h5>
+
+            <form method="get" action="@Url.Action("Index", "Home")">
+              <div class="mb-3">
+                <label for="searchInput" class="form-label fw-bold">Ürün Ara</label>
+                <input type="text" class="form-control" name="searchInput" id="searchInput" placeholder="Örn: iPhone, Asus..." value="@Context.Request.Query["searchInput"]" />
+              </div>
+
+              <div class="mb-3">
+                <label for="categorySelect" class="form-label fw-bold">Kategori</label>
+                <select class="form-select" name="categorySelect" id="categorySelect">
+                  <option value="all">Tüm Kategoriler</option>
+                  <option value="telefon">Telefon</option>
+                  <option value="bilgisayar">Bilgisayar</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label d-block fw-bold">Stok Durumu</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="stockRadio" id="stockAll" value="all" checked />
+                  <label class="form-check-label" for="stockAll">Hepsi</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="stockRadio" id="stockOnly" value="true" />
+                  <label class="form-check-label" for="stockOnly">Sadece Stoktakiler</label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-dark w-100 mt-2">Uygula / Filtrele</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-md-9">
+          <div class="p-3 bg-light border rounded">
+            <h5 class="mb-3">Ürün Listesi</h5>
+
+            <div class="row" id="productGrid">
+                @if (!Model.Any())
+                {
+                    <div class="col-12">
+                        <div class="alert alert-warning text-center" role="alert">
+                            Aradığınız kriterlere uygun ürün bulunamadı.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var urun in Model)
+                    {
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <span class="badge @(urun.Category == "telefon" ? "bg-primary" : "bg-success") mb-2">@urun.Category.ToUpper()</span>
+                                    <h5 class="card-title">@urun.Name</h5>
+                                    <p class="card-text text-muted small">@urun.Description</p>
+                                    <div class="mb-2">
+                                        @if (urun.IsInStock)
+                                        {
+                                            <span class="text-success small">Stokta Var</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger small">Tükendi</span>
+                                        }
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="fw-bold text-dark">@urun.Price.ToString("N0") TL</span>
+                                        <button class="btn btn-sm btn-outline-dark">Detaylar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
